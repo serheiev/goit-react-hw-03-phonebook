@@ -20,6 +20,20 @@ export class App extends Component {
     filter: '',
   };
 
+  componentDidUpdate(prevProps, prevState) {
+    const { contacts } = this.state;
+    if (contacts !== prevState.contacts) {
+      localStorage.setItem('contacts', JSON.stringify(contacts));
+    }
+  }
+
+  componentDidMount() {
+    const contacts = localStorage.getItem('contacts');
+    if (contacts) {
+      this.setState({ contacts: JSON.parse(contacts) });
+    }
+  }
+
   contactSubmit = data => {
     const contact = {
       id: nanoid(),
@@ -35,15 +49,6 @@ export class App extends Component {
     });
   };
 
-  // filterContacts = ({ target: { value } }) => {
-  //   this.setState(prevState => {
-  //     return {
-  //       filter: prevState.contacts.filter(el =>
-  //         el.name.toLocaleLowerCase().includes(value.toLocaleLowerCase())
-  //       ),
-  //     };
-  //   });
-  // };
   filterContacts = ({ target: { value } }) => {
     this.setState(() => ({ filter: value }));
   };
@@ -75,15 +80,8 @@ export class App extends Component {
             name="search"
             pattern=""
           />
-          {/* <InputFilter
-            placeholder="name in contacts"
-            type="text"
-            filter={filter}
-            onChange={this.filterContacts}
-          /> */}
+
           <Contacts contacts={filteredContacts} onDelete={this.deleteContact} />
-          {/* <InputFilter onChange={this.filterContacts} />
-          <Contacts contacts={filter ? filter : contacts} /> */}
         </Section>
       </>
     );
